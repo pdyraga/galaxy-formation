@@ -30,8 +30,8 @@ final class DrawableSpace(space: Space) {
   }
 
   private[this] def scale(coordinates: Coordinates, width: Int, height: Int, rMax: Int): Coordinates = {
-    val scaleX = width / (2 * rMax)
-    val scaleY = height / (2 * rMax)
+    val scaleX = width.toDouble / (2 * rMax)
+    val scaleY = height.toDouble / (2 * rMax)
 
     val scale = if (scaleX < scaleY) scaleX else scaleY
 
@@ -42,7 +42,7 @@ final class DrawableSpace(space: Space) {
 
   private[this] def crop(coordinates: Coordinates, width: Int, height: Int): Coordinates = {
     coordinates.filter { case (x,y) =>
-      x < width && y < width
+      x > 0 && y > 0 && x < width && y < width
     }
   }
 
