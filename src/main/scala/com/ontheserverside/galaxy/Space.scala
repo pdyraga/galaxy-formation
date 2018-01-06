@@ -28,7 +28,7 @@ trait Constants {
   /**
     *  Mass of the central point
     */
-  val centralMass = 10000
+  val centralMass = 333000 // Earth vs Sun mass
 }
 
 class Space(val points: ImmutableArray[Point])
