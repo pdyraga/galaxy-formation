@@ -8,7 +8,16 @@ case class Point(
   positionVector: PositionVector,
   velocityVector: EuclideanVector,
   mass: Double = 1.0
-)
+) {
+  def distanceVector(anotherPoint: Point): EuclideanVector = {
+    EuclideanVector(
+      positionVector.headX,
+      positionVector.headY,
+      anotherPoint.positionVector.headX,
+      anotherPoint.positionVector.headY
+    )
+  }
+}
 
 trait Constants {
   /**
