@@ -5,4 +5,4 @@ case class EuclideanVector(
   tailY: Double,
   headX: Double,
   headY: Double
-)
+) extends EuclideanVectorBase
