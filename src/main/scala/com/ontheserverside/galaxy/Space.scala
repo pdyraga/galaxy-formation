@@ -43,7 +43,7 @@ object Space extends Constants {
 
     new Space(centralMassPoint +: ImmutableArray.fill(pointsCount) {
       val r = random.nextDouble(0, 1)
-      val φ = random.nextDouble(0, 360)
+      val φ = random.nextDouble(0, Math.PI * 2)
 
       val positionVector = PositionVector(
         Math.sqrt(r) * Math.cos(φ) * rMax,
