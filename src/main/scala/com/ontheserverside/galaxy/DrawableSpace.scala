@@ -19,7 +19,7 @@ final class DrawableSpace(space: Space) {
 
   private[this] def pointCartesianCoordinates: Coordinates = {
     space.points.view.map { point =>
-      (point.positionVector.headX, point.positionVector.headY)
+      (point.position.x, point.position.y)
     }
   }
 

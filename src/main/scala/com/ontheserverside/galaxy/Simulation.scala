@@ -34,8 +34,7 @@ class Simulation(
     val forceFactors = ArrayBuffer.fill(space.points.length)((0.0, 0.0))
 
     space.points.view.zipWithIndex.foreach { case (point, pointIdx) =>
-      val otherPointsToCheck = space.points
-        .view
+      val otherPointsToCheck = new ParIndexedView(space.points.view)
         .zipWithIndex
         .drop(pointIdx + 1)
 
@@ -46,8 +45,8 @@ class Simulation(
         val distanceVector = point.distanceVector(anotherPoint)
         val forceScalar = G * anotherPoint.mass / Math.pow(distanceVector.magnitude, 3.0) //TODO: we can move G out of here
         val forceFactor = (
-          distanceVector.headX * forceScalar,
-          distanceVector.headY * forceScalar
+          distanceVector.x * forceScalar,
+          distanceVector.y * forceScalar
         )
 
         forceFactors(pointIdx) = (
@@ -63,17 +62,17 @@ class Simulation(
     }
 
     new Space(ImmutableArray.from(space.points.view.zipWithIndex.map { case (point, pointIdx) =>
-      val newPosition = point.positionVector.copy(
-        headX = point.positionVector.headX + stepTimespan * point.velocityVector.headX,
-        headY = point.positionVector.headY + stepTimespan * point.velocityVector.headY
+      val newPosition = point.position.copy(
+        x = point.position.x + stepTimespan * point.velocity.x,
+        y = point.position.y + stepTimespan * point.velocity.y
       )
 
-      val newVelocity = point.velocityVector.copy(
-        headX = point.velocityVector.headX + stepTimespan * forceFactors(pointIdx)._1,
-        headY = point.velocityVector.headY + stepTimespan * forceFactors(pointIdx)._2
+      val newVelocity = point.velocity.copy(
+        x = point.velocity.x + stepTimespan * forceFactors(pointIdx)._1,
+        y = point.velocity.y + stepTimespan * forceFactors(pointIdx)._2
       )
 
-      point.copy(positionVector = newPosition, velocityVector = newVelocity)
+      point.copy(position = newPosition, velocity = newVelocity)
     }))
   }
 }
@@ -83,10 +82,12 @@ object Simulation {
   def main(args: Array[String]): Unit = {
     val rMax = 10
 
-    val space = Space.generateHomogeneousSpace(1, rMax)
+    val space = Space.generateHomogeneousSpace(100000, rMax)
+
+    space.points.foreach(println)
 
     val onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d", rMax)
-    new Simulation(2500, 0.1, rMax, onStepCompleted).execute(space)
+    new Simulation(1000, 10, rMax, onStepCompleted).execute(space)
   }
 
   //TODO: draw in a searate thread
