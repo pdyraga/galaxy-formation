@@ -43,7 +43,7 @@ class Simulation(
       otherPointsToCheck.foreach { case (anotherPoint, anotherPointIdx) =>
 
         val distanceVector = point.distanceVector(anotherPoint)
-        val forceScalar = G * anotherPoint.mass / Math.pow(distanceVector.magnitude, 3.0) //TODO: we can move G out of here
+        val forceScalar = G * point.mass * anotherPoint.mass / Math.pow(distanceVector.magnitude, 3.0) //TODO: we can move G out of here
         val forceFactor = (
           distanceVector.x * forceScalar,
           distanceVector.y * forceScalar
@@ -68,8 +68,8 @@ class Simulation(
       )
 
       val newVelocity = point.velocity.copy(
-        x = point.velocity.x + stepTimespan * forceFactors(pointIdx)._1,
-        y = point.velocity.y + stepTimespan * forceFactors(pointIdx)._2
+        x = point.velocity.x + stepTimespan * forceFactors(pointIdx)._1 / point.mass,
+        y = point.velocity.y + stepTimespan * forceFactors(pointIdx)._2 / point.mass
       )
 
       point.copy(position = newPosition, velocity = newVelocity)
