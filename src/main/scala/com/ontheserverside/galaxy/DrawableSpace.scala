@@ -57,14 +57,14 @@ final class DrawableSpace(space: Space) {
   }
 
 
-  def draw(outputFile: File, width: Int, height: Int, rMax: Double): Unit = {
+  def draw(outputFile: File, width: Int, height: Int, rMax: Double, margin: Double = 0): Unit = {
     val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
     val background = image.createGraphics();
     background.setPaint(Color.WHITE);
     background.fillRect(0, 0, image.getWidth, image.getHeight);
 
-    transformedCoordinates(width, height, rMax).foreach { case (x, y) =>
+    transformedCoordinates(width, height, rMax + margin).foreach { case (x, y) =>
       image.setRGB(x.toInt, y.toInt, Color.BLACK.getRGB)
     }
 

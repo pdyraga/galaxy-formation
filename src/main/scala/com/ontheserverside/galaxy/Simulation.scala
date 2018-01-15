@@ -82,14 +82,18 @@ object Simulation {
 
     val space = Space.generateHomogeneousSpace(1000, rMax)
 
-    space.points.foreach(println)
-
     val onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d", rMax)
     new Simulation(1000, 3600, rMax, onStepCompleted).execute(space)
   }
 
   //TODO: draw in a searate thread
   private[this] def draw(space: Space, fileName: String, rMax: Double) = {
-    space.draw(new File(s"/tmp/simulation/$fileName.png"), 600, 600, rMax)
+    space.draw(
+      outputFile = new File(s"/tmp/simulation/$fileName.png"),
+      width = 600,
+      height = 600,
+      rMax = rMax,
+      margin = 500
+    )
   }
 }
