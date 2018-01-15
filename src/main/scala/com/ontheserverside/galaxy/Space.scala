@@ -26,13 +26,13 @@ trait Constants {
   /**
     *  Mass of the central point
     */
-  val centralMass = 10E8 //333000 Earth vs Sun mass
+  val centralMass = 10E10 //333000 Earth vs Sun mass
 }
 
 class Space(val points: ImmutableArray[Point])
 
 object Space extends Constants {
-  def generateHomogeneousSpace(pointsCount: Int, rMax: Int = 10): Space = {
+  def generateHomogeneousSpace(pointsCount: Int, rMax: Double): Space = {
     val random = ThreadLocalRandom.current()
 
     val centralMassPoint = Point(

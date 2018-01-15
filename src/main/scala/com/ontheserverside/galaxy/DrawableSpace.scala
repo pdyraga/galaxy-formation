@@ -23,13 +23,13 @@ final class DrawableSpace(space: Space) {
     }
   }
 
-  private[this] def translate(coordinates: Coordinates, rMax: Int): Coordinates = {
+  private[this] def translate(coordinates: Coordinates, rMax: Double): Coordinates = {
     coordinates.map { case (x, y) =>
       (x + rMax, y + rMax)
     }
   }
 
-  private[this] def scale(coordinates: Coordinates, width: Int, height: Int, rMax: Int): Coordinates = {
+  private[this] def scale(coordinates: Coordinates, width: Int, height: Int, rMax: Double): Coordinates = {
     val scaleX = width.toDouble / (2 * rMax)
     val scaleY = height.toDouble / (2 * rMax)
 
@@ -50,14 +50,14 @@ final class DrawableSpace(space: Space) {
     Performs affine transformation of all `Space` points making them all be expressed by
     positive integers and fitting inside bounding box with specified `width` and `height`.
    */
-  private[this] def transformedCoordinates(width: Int, height: Int, rMax: Int): Coordinates = {
+  private[this] def transformedCoordinates(width: Int, height: Int, rMax: Double): Coordinates = {
     val translated = translate(pointCartesianCoordinates, rMax)
     val scaled = scale(translated, width, height, rMax)
     crop(scaled, width, height)
   }
 
 
-  def draw(outputFile: File, width: Int, height: Int, rMax: Int): Unit = {
+  def draw(outputFile: File, width: Int, height: Int, rMax: Double): Unit = {
     val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
     val background = image.createGraphics();

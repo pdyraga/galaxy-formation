@@ -38,12 +38,10 @@ class Simulation(
         .zipWithIndex
         .drop(pointIdx + 1)
 
-
-      //TODO: parallelize this loop
       otherPointsToCheck.foreach { case (anotherPoint, anotherPointIdx) =>
 
         val distanceVector = point.distanceVector(anotherPoint)
-        val forceScalar = G * point.mass * anotherPoint.mass / Math.pow(distanceVector.magnitude, 3.0) //TODO: we can move G out of here
+        val forceScalar = G * point.mass * anotherPoint.mass / Math.pow(distanceVector.magnitude, 3.0)
         val forceFactor = (
           distanceVector.x * forceScalar,
           distanceVector.y * forceScalar
@@ -80,18 +78,18 @@ class Simulation(
 object Simulation {
   // ffmpeg -r 10 -f image2 -s 600x600 -i space-%05d.png -vcodec libx264 -crf 25  -pix_fmt yuv420p test.mp4
   def main(args: Array[String]): Unit = {
-    val rMax = 10
+    val rMax = 10000
 
-    val space = Space.generateHomogeneousSpace(100000, rMax)
+    val space = Space.generateHomogeneousSpace(1000, rMax)
 
     space.points.foreach(println)
 
     val onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d", rMax)
-    new Simulation(1000, 10, rMax, onStepCompleted).execute(space)
+    new Simulation(1000, 3600, rMax, onStepCompleted).execute(space)
   }
 
   //TODO: draw in a searate thread
-  private[this] def draw(space: Space, fileName: String, rMax: Int) = {
+  private[this] def draw(space: Space, fileName: String, rMax: Double) = {
     space.draw(new File(s"/tmp/simulation/$fileName.png"), 600, 600, rMax)
   }
 }
