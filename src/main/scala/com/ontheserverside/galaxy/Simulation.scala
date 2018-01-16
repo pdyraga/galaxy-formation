@@ -80,7 +80,7 @@ object Simulation {
   def main(args: Array[String]): Unit = {
     val rMax = 10000
 
-    val space = Space.generateHomogeneousSpace(1000, rMax)
+    val space = Space.generateHomogeneousSpace(100000, rMax)
 
     val onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d", rMax)
     new Simulation(1000, 3600, rMax, onStepCompleted).execute(space)
@@ -90,10 +90,10 @@ object Simulation {
   private[this] def draw(space: Space, fileName: String, rMax: Double) = {
     space.draw(
       outputFile = new File(s"/tmp/simulation/$fileName.png"),
-      width = 600,
-      height = 600,
+      width = 2000,
+      height = 2000,
       rMax = rMax,
-      margin = 500
+      margin = 3000
     )
   }
 }
