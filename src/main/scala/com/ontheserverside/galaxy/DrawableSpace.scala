@@ -13,59 +13,46 @@ object DrawableSpace {
   }
 }
 
-final class DrawableSpace(space: Space) {
+class DrawableSpace(space: Space) {
+  type Points = IndexedView[(Double, Double)]
 
-  type Coordinates = IndexedView[(Double, Double)]
+  private[this] def crop(points: Points, imageSize: Int): Points = {
+    val fn = points.filterNot { case (x,y) =>
+      x > 0 && y > 0 && x < imageSize && y < imageSize
+    }
 
-  private[this] def pointCartesianCoordinates: Coordinates = {
+    println(s"Filtered out ${fn.size} points")
+
+    points.filter { case (x,y) =>
+      x > 0 && y > 0 && x < imageSize && y < imageSize
+    }
+  }
+
+  private[this] def affineTransformation(points: Points, imageSize: Int, scale: Double): Points = {
+    val translation = imageSize / 2
+
+    val scaledAndTranslated = points.map { case (x, y) =>
+      (x * scale + translation, y * scale + translation)
+    }
+
+    crop(scaledAndTranslated, imageSize)
+  }
+
+  private[this] def pointCartesianCoordinates: Points = {
     space.points.view.map { point =>
       (point.position.x, point.position.y)
     }
   }
 
-  private[this] def translate(coordinates: Coordinates, rMax: Double): Coordinates = {
-    coordinates.map { case (x, y) =>
-      (x + rMax, y + rMax)
-    }
-  }
-
-  private[this] def scale(coordinates: Coordinates, width: Int, height: Int, rMax: Double): Coordinates = {
-    val scaleX = width.toDouble / (2 * rMax)
-    val scaleY = height.toDouble / (2 * rMax)
-
-    val scale = if (scaleX < scaleY) scaleX else scaleY
-
-    coordinates.map { case (x, y) =>
-      (x * scale, y * scale)
-    }
-  }
-
-  private[this] def crop(coordinates: Coordinates, width: Int, height: Int): Coordinates = {
-    coordinates.filter { case (x,y) =>
-      x > 0 && y > 0 && x < width && y < width
-    }
-  }
-
-  /*
-    Performs affine transformation of all `Space` points making them all be expressed by
-    positive integers and fitting inside bounding box with specified `width` and `height`.
-   */
-  private[this] def transformedCoordinates(width: Int, height: Int, rMax: Double): Coordinates = {
-    val translated = translate(pointCartesianCoordinates, rMax)
-    val scaled = scale(translated, width, height, rMax)
-    crop(scaled, width, height)
-  }
-
-
-  def draw(outputFile: File, width: Int, height: Int, rMax: Double, margin: Double = 0): Unit = {
-    val image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+  def draw(outputFile: File, imageSize: Int, scale: Double): Unit = {
+    val image = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
 
     val background = image.createGraphics();
-    background.setPaint(Color.WHITE);
+    background.setPaint(Color.BLACK);
     background.fillRect(0, 0, image.getWidth, image.getHeight);
 
-    transformedCoordinates(width, height, rMax + margin).foreach { case (x, y) =>
-      image.setRGB(x.toInt, y.toInt, Color.BLACK.getRGB)
+    affineTransformation(pointCartesianCoordinates, imageSize, scale).foreach { case (x, y) =>
+      image.setRGB(x.toInt, y.toInt, Color.WHITE.getRGB)
     }
 
     ImageIO.write(image, "png", outputFile)

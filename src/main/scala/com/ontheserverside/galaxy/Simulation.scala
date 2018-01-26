@@ -86,14 +86,11 @@ object Simulation {
     new Simulation(1000, 3600, rMax, onStepCompleted).execute(space)
   }
 
-  //TODO: draw in a searate thread
   private[this] def draw(space: Space, fileName: String, rMax: Double) = {
     space.draw(
       outputFile = new File(s"/tmp/simulation/$fileName.png"),
-      width = 2000,
-      height = 2000,
-      rMax = rMax,
-      margin = 3000
+      imageSize = 2000,
+      scale = 0.15
     )
   }
 }
