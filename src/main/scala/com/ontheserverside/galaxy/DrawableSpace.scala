@@ -17,12 +17,6 @@ class DrawableSpace(space: Space) {
   type Points = IndexedView[(Double, Double)]
 
   private[this] def crop(points: Points, imageSize: Int): Points = {
-    val fn = points.filterNot { case (x,y) =>
-      x > 0 && y > 0 && x < imageSize && y < imageSize
-    }
-
-    println(s"Filtered out ${fn.size} points")
-
     points.filter { case (x,y) =>
       x > 0 && y > 0 && x < imageSize && y < imageSize
     }
