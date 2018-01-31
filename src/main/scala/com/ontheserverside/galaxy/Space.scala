@@ -53,7 +53,7 @@ object Space extends Constants {
       )
 
       val velocityVector = EuclideanVector(
-        velocity * Math.sin(φ),
+        -1 * velocity * Math.sin(φ),
         velocity * Math.cos(φ)
       )
 
