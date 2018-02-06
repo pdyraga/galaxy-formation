@@ -1,12 +1,12 @@
 package com.ontheserverside.galaxy
 
 import java.io.File
+import java.time.{LocalDateTime, ZonedDateTime}
 
 import DrawableSpace._
-import strawman.collection.immutable.ImmutableArray
-import strawman.collection.mutable.ArrayBuffer
 
 import scala.annotation.tailrec
+import scala.collection.mutable.ArrayBuffer
 
 class Simulation(
   val totalSteps: Int,
@@ -19,7 +19,7 @@ class Simulation(
 
   @tailrec
   private[this] def execute(space: Space, stepsSoFar: Int): Space = {
-    println(s"Executing step $stepsSoFar out of $totalSteps")
+    println(s"[${LocalDateTime.now}] Executing step $stepsSoFar out of $totalSteps")
 
     if (stepsSoFar == totalSteps) {
       space
@@ -33,8 +33,8 @@ class Simulation(
   private[this] def executeStep(space: Space): Space = {
     val forceFactors = ArrayBuffer.fill(space.points.length)((0.0, 0.0))
 
-    space.points.view.zipWithIndex.foreach { case (point, pointIdx) =>
-      val otherPointsToCheck = new ParIndexedView(space.points.view)
+    space.points.par.zipWithIndex.foreach { case (point, pointIdx) =>
+      val otherPointsToCheck = space.points.view
         .zipWithIndex
         .drop(pointIdx + 1)
 
@@ -59,7 +59,7 @@ class Simulation(
       }
     }
 
-    new Space(ImmutableArray.from(space.points.view.zipWithIndex.map { case (point, pointIdx) =>
+    new Space(space.points.view.zipWithIndex.map { case (point, pointIdx) =>
       val newPosition = point.position.copy(
         x = point.position.x + stepTimespan * point.velocity.x,
         y = point.position.y + stepTimespan * point.velocity.y
@@ -71,7 +71,7 @@ class Simulation(
       )
 
       point.copy(position = newPosition, velocity = newVelocity)
-    }))
+    }.toArray)
   }
 }
 

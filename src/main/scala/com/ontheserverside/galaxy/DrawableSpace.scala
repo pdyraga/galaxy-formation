@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
-import strawman.collection.IndexedView
 
 object DrawableSpace {
   implicit def augmentSpace(space: Space): DrawableSpace = {
@@ -14,38 +13,31 @@ object DrawableSpace {
 }
 
 class DrawableSpace(space: Space) {
-  type Points = IndexedView[(Double, Double)]
+  type Points = Iterable[(Double, Double)]
 
-  private[this] def crop(points: Points, imageSize: Int): Points = {
-    points.filter { case (x,y) =>
-      x > 0 && y > 0 && x < imageSize && y < imageSize
-    }
-  }
-
-  private[this] def affineTransformation(points: Points, imageSize: Int, scale: Double): Points = {
+  /**
+    * Reads and transforms cartesian coordinates of Space points.
+    * We need to scale Space according to the provided factor as well as
+    * translate Space position to put point (0, 0) in the center of image.
+    * Last but not least we filter out Space points no longer fitting image size.
+    */
+  private[this] def evaluateCoordinates(imageSize: Int, scale: Double): Points = {
     val translation = imageSize / 2
 
-    val scaledAndTranslated = points.map { case (x, y) =>
-      (x * scale + translation, y * scale + translation)
-    }
-
-    crop(scaledAndTranslated, imageSize)
-  }
-
-  private[this] def pointCartesianCoordinates: Points = {
-    space.points.view.map { point =>
-      (point.position.x, point.position.y)
-    }
+    space.points.view
+      .map { point => (point.position.x, point.position.y) }
+      .map { case (x,y) => (x * scale + translation, y * scale + translation) }
+      .filter { case (x, y) => x > 0 && y > 0 && x < imageSize && y < imageSize }
   }
 
   def draw(outputFile: File, imageSize: Int, scale: Double): Unit = {
     val image = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
 
-    val background = image.createGraphics();
-    background.setPaint(Color.BLACK);
-    background.fillRect(0, 0, image.getWidth, image.getHeight);
+    val background = image.createGraphics()
+    background.setPaint(Color.BLACK)
+    background.fillRect(0, 0, image.getWidth, image.getHeight)
 
-    affineTransformation(pointCartesianCoordinates, imageSize, scale).foreach { case (x, y) =>
+    evaluateCoordinates(imageSize, scale).foreach { case (x, y) =>
       image.setRGB(x.toInt, y.toInt, Color.WHITE.getRGB)
     }
 

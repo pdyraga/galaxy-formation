@@ -2,7 +2,6 @@ package com.ontheserverside.galaxy
 
 import java.util.concurrent.ThreadLocalRandom
 
-import strawman.collection.immutable.ImmutableArray
 
 case class Point(
   position: EuclideanVector,
@@ -29,7 +28,7 @@ trait Constants {
   val centralMass = 10E10 //333000 Earth vs Sun mass
 }
 
-class Space(val points: ImmutableArray[Point])
+class Space(val points: Array[Point])
 
 object Space extends Constants {
   def generateHomogeneousSpace(pointsCount: Int, rMax: Double): Space = {
@@ -39,7 +38,7 @@ object Space extends Constants {
       EuclideanVector(0, 0), EuclideanVector(0,0), centralMass
     )
 
-    new Space(centralMassPoint +: ImmutableArray.fill(pointsCount) {
+    new Space(centralMassPoint +: Array.fill(pointsCount) {
       val r = random.nextDouble(0, 1)
       val φ = random.nextDouble(0, Math.PI * 2)
 
