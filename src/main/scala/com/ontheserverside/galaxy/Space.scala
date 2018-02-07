@@ -28,6 +28,19 @@ object Space {
     new Space(centralMassPoint +: Array.fill(pointsCount)(drawPoint(rMax/2, rMax)))
   }
 
+  def generateSpaceFromDensityFn(densityFn: Double => Int, rMax: Double, step: Double = 1.0) = {
+    val centralMassPoint = Point(
+      EuclideanVector(0, 0), EuclideanVector(0,0), centralMass
+    )
+
+    val generatedPoints = for (r <- 0.0 until rMax - step by step) yield {
+      val density = (densityFn(r) + densityFn(r + step)) / 2
+      Array.fill(density)(drawPoint(r, r + step))
+    }
+
+    new Space(centralMassPoint +: generatedPoints.flatten.toArray)
+  }
+
   def drawPoint(rMin: Double, rMax: Double): Point = {
     val random = ThreadLocalRandom.current()
 
