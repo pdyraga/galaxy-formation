@@ -2,6 +2,7 @@ package com.ontheserverside.galaxy
 
 import java.util.concurrent.ThreadLocalRandom
 
+import Constants._
 
 case class Point(
   position: EuclideanVector,
@@ -16,21 +17,9 @@ case class Point(
   }
 }
 
-trait Constants {
-  /**
-    *  Gravitational constant
-    */
-  val G = 6.67408E-11;
-
-  /**
-    *  Mass of the central point
-    */
-  val centralMass = 10E10 //333000 Earth vs Sun mass
-}
-
 class Space(val points: Array[Point])
 
-object Space extends Constants {
+object Space {
   def generateHomogeneousSpace(pointsCount: Int, rMax: Double): Space = {
     val random = ThreadLocalRandom.current()
 

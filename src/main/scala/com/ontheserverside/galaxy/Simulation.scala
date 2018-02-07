@@ -3,17 +3,19 @@ package com.ontheserverside.galaxy
 import java.io.File
 import java.time.LocalDateTime
 
-import DrawableSpace._
 import com.google.common.util.concurrent.AtomicDoubleArray
 
 import scala.annotation.tailrec
+
+import DrawableSpace._
+import Constants._
 
 class Simulation(
   val totalSteps: Int,
   val stepTimespan: Double,
   val rMax: Double,
   val onStepCompleted: (Space, Int) => Unit
-) extends Constants {
+) {
 
   def execute(space: Space): Space = execute(space, 0)
 

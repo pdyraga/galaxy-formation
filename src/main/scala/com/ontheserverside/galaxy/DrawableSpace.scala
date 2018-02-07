@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
-
 object DrawableSpace {
   implicit def augmentSpace(space: Space): DrawableSpace = {
     new DrawableSpace(space)
