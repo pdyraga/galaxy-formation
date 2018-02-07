@@ -4,9 +4,9 @@ import java.io.File
 import java.time.LocalDateTime
 
 import DrawableSpace._
+import com.google.common.util.concurrent.AtomicDoubleArray
 
 import scala.annotation.tailrec
-import scala.collection.mutable.ArrayBuffer
 
 class Simulation(
   val totalSteps: Int,
@@ -31,7 +31,8 @@ class Simulation(
   }
 
   private[this] def executeStep(space: Space): Space = {
-    val forceFactors = ArrayBuffer.fill(space.points.length)((0.0, 0.0))
+    val forceFactorsX = new AtomicDoubleArray(space.points.length)
+    val forceFactorsY = new AtomicDoubleArray(space.points.length)
 
     for (i <- 0 until space.points.length) {
       for (j <- (i + 1 until space.points.length).par) {
@@ -43,15 +44,11 @@ class Simulation(
           distanceVector.y * forceScalar
         )
 
-        forceFactors(i) = (
-          forceFactors(i)._1 + forceFactor._1,
-          forceFactors(i)._2 + forceFactor._2
-        )
+        forceFactorsX.addAndGet(i, forceFactor._1)
+        forceFactorsY.addAndGet(i, forceFactor._2)
 
-        forceFactors(j) = (
-          forceFactors(j)._1 - forceFactor._1,
-          forceFactors(j)._2 - forceFactor._2
-        )
+        forceFactorsX.addAndGet(j, -1 * forceFactor._1)
+        forceFactorsY.addAndGet(j, -1 * forceFactor._2)
       }
     }
 
@@ -62,8 +59,8 @@ class Simulation(
       )
 
       val newVelocity = point.velocity.copy(
-        x = point.velocity.x + stepTimespan * forceFactors(pointIdx)._1 / point.mass,
-        y = point.velocity.y + stepTimespan * forceFactors(pointIdx)._2 / point.mass
+        x = point.velocity.x + stepTimespan * forceFactorsX.get(pointIdx) / point.mass,
+        y = point.velocity.y + stepTimespan * forceFactorsY.get(pointIdx) / point.mass
       )
 
       point.copy(position = newPosition, velocity = newVelocity)

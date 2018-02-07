@@ -10,3 +10,9 @@ resolvers ++= Seq(
   "snapshots" at "http://maven.jzy3d.org/snapshots",
   "releases"  at "http://maven.jzy3d.org/releases"
 )
+
+libraryDependencies ++= {
+  Seq(
+    "com.google.guava" % "guava" % "24.0-jre"
+  )
+}
