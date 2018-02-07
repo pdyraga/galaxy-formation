@@ -1,7 +1,7 @@
 package com.ontheserverside.galaxy
 
 import java.io.File
-import java.time.{LocalDateTime, ZonedDateTime}
+import java.time.LocalDateTime
 
 import DrawableSpace._
 
@@ -33,28 +33,24 @@ class Simulation(
   private[this] def executeStep(space: Space): Space = {
     val forceFactors = ArrayBuffer.fill(space.points.length)((0.0, 0.0))
 
-    space.points.par.zipWithIndex.foreach { case (point, pointIdx) =>
-      val otherPointsToCheck = space.points.view
-        .zipWithIndex
-        .drop(pointIdx + 1)
+    for (i <- 0 until space.points.length) {
+      for (j <- (i + 1 until space.points.length).par) {
 
-      otherPointsToCheck.foreach { case (anotherPoint, anotherPointIdx) =>
-
-        val distanceVector = point.distanceVector(anotherPoint)
-        val forceScalar = G * point.mass * anotherPoint.mass / Math.pow(distanceVector.magnitude, 3.0)
+        val distanceVector = space.points(i).distanceVector(space.points(j))
+        val forceScalar = G * space.points(i).mass * space.points(j).mass / Math.pow(distanceVector.magnitude, 3.0)
         val forceFactor = (
           distanceVector.x * forceScalar,
           distanceVector.y * forceScalar
         )
 
-        forceFactors(pointIdx) = (
-          forceFactors(pointIdx)._1 + forceFactor._1,
-          forceFactors(pointIdx)._2 + forceFactor._2
+        forceFactors(i) = (
+          forceFactors(i)._1 + forceFactor._1,
+          forceFactors(i)._2 + forceFactor._2
         )
 
-        forceFactors(anotherPointIdx) = (
-          forceFactors(anotherPointIdx)._1 - forceFactor._1,
-          forceFactors(anotherPointIdx)._2 - forceFactor._2
+        forceFactors(j) = (
+          forceFactors(j)._1 - forceFactor._1,
+          forceFactors(j)._2 - forceFactor._2
         )
       }
     }
