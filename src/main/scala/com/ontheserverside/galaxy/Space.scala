@@ -21,31 +21,32 @@ class Space(val points: Array[Point])
 
 object Space {
   def generateHomogeneousSpace(pointsCount: Int, rMax: Double): Space = {
-    val random = ThreadLocalRandom.current()
-
     val centralMassPoint = Point(
       EuclideanVector(0, 0), EuclideanVector(0,0), centralMass
     )
 
-    new Space(centralMassPoint +: Array.fill(pointsCount) {
-      val r = random.nextDouble(0, 1)
-      val φ = random.nextDouble(0, Math.PI * 2)
+    new Space(centralMassPoint +: Array.fill(pointsCount)(drawPoint(rMax/2, rMax)))
+  }
 
-      val positionVector = EuclideanVector(
-        Math.sqrt(r) * Math.cos(φ) * rMax,
-        Math.sqrt(r) * Math.sin(φ) * rMax
-      )
+  def drawPoint(rMin: Double, rMax: Double): Point = {
+    val random = ThreadLocalRandom.current()
 
-      val velocity = Math.sqrt(
-        (G * centralMass) / positionVector.magnitude
-      )
+    val r = random.nextDouble(0, 1)
+    val φ = random.nextDouble(0, Math.PI * 2)
 
-      val velocityVector = EuclideanVector(
-        -1 * velocity * Math.sin(φ),
-        velocity * Math.cos(φ)
-      )
+    val R = Math.sqrt((Math.pow(rMax, 2) - Math.pow(rMin, 2)) * r + Math.pow(rMin, 2))
 
-      new Point(positionVector, velocityVector)
-    })
+    val positionVector = EuclideanVector(R * Math.cos(φ), R * Math.sin(φ))
+
+    val velocity = Math.sqrt(
+      (G * centralMass) / positionVector.magnitude
+    )
+
+    val velocityVector = EuclideanVector(
+      -1 * velocity * Math.sin(φ),
+      velocity * Math.cos(φ)
+    )
+
+    new Point(positionVector, velocityVector)
   }
 }
