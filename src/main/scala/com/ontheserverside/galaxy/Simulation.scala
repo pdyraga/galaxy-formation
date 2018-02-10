@@ -73,19 +73,28 @@ class Simulation(
 object Simulation {
   // ffmpeg -r 10 -f image2 -s 2000x2000 -i space-%05d.png -vcodec libx264 -crf 25  -pix_fmt yuv420p test.mp4
   def main(args: Array[String]): Unit = {
-    val rMax = 1000
 
-    val space = Space.generateHomogeneousSpace(10000, rMax)
+    val scaleLength = 0.5
+    val rMax = 5
+    val totalMass = 1000
+    
+    val space = Space.generateSpaceFromDensityFn(
+      densityFn = r => BulgeProfile.densityFn(r, totalMass, scaleLength),
+      velocityFn = r => BulgeProfile.velocityFn(r, totalMass, scaleLength),
+      rMax = rMax
+    )
+
+    draw(space, "space-initial", rMax)
 
     val onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d", rMax)
-    new Simulation(1000, 60, rMax, onStepCompleted).execute(space)
+    new Simulation(1000, 1, rMax, onStepCompleted).execute(space)
   }
 
   private[this] def draw(space: Space, fileName: String, rMax: Double) = {
     space.draw(
       outputFile = new File(s"/tmp/simulation/$fileName.png"),
       imageSize = 2000,
-      scale = 0.5
+      scale = 100
     )
   }
 }

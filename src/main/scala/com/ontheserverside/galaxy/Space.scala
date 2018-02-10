@@ -21,27 +21,28 @@ class Space(val points: Array[Point])
 
 object Space {
   def generateHomogeneousSpace(pointsCount: Int, rMax: Double): Space = {
-    val centralMassPoint = Point(
-      EuclideanVector(0, 0), EuclideanVector(0,0), centralMass
-    )
+    val centralMass = 10E10
+    val centralMassPoint = Point(EuclideanVector(0, 0), EuclideanVector(0,0), centralMass)
 
-    new Space(centralMassPoint +: Array.fill(pointsCount)(drawPoint(rMax/2, rMax)))
+    new Space(centralMassPoint +: Array.fill(pointsCount)(drawPoint(0, rMax, r => Math.sqrt(G * centralMass / r))))
   }
 
-  def generateSpaceFromDensityFn(densityFn: Double => Int, rMax: Double, step: Double = 1.0) = {
-    val centralMassPoint = Point(
-      EuclideanVector(0, 0), EuclideanVector(0,0), centralMass
-    )
-
-    val generatedPoints = for (r <- 0.0 until rMax - step by step) yield {
+  def generateSpaceFromDensityFn(
+    densityFn: Double => Double,
+    velocityFn: Double => Double,
+    rMax: Double,
+    step: Double = 0.1
+  ) = {
+    val generatedPoints = (for (r <- 0.0 until rMax - step by step) yield {
       val density = (densityFn(r) + densityFn(r + step)) / 2
-      Array.fill(density)(drawPoint(r, r + step))
-    }
+      Seq.fill(density.toInt)(drawPoint(r, r + step, velocityFn))
+    }).flatten.toArray
 
-    new Space(centralMassPoint +: generatedPoints.flatten.toArray)
+    println(s"Generated space with ${generatedPoints.size} points")
+    new Space(generatedPoints)
   }
-
-  def drawPoint(rMin: Double, rMax: Double): Point = {
+  
+  def drawPoint(rMin: Double, rMax: Double, velocityFn: Double => Double): Point = {
     val random = ThreadLocalRandom.current()
 
     val r = random.nextDouble(0, 1)
@@ -51,9 +52,7 @@ object Space {
 
     val positionVector = EuclideanVector(R * Math.cos(φ), R * Math.sin(φ))
 
-    val velocity = Math.sqrt(
-      (G * centralMass) / positionVector.magnitude
-    )
+    val velocity = velocityFn(positionVector.magnitude)
 
     val velocityVector = EuclideanVector(
       -1 * velocity * Math.sin(φ),
