@@ -31,11 +31,16 @@ object Space {
     densityFn: Double => Double,
     velocityFn: Double => Double,
     rMax: Double,
-    step: Double = 0.1
+    step: Double = 0.01
   ) = {
-    val generatedPoints = (for (r <- 0.0 until rMax - step by step) yield {
-      val density = (densityFn(r) + densityFn(r + step)) / 2
-      Seq.fill(density.toInt)(drawPoint(r, r + step, velocityFn))
+    val generatedPoints = (for (r <- 0.0 until rMax by step) yield {
+      val r2 = r + step
+
+      val density = if (r == 0) densityFn(r2) else ((densityFn(r) + densityFn(r2)) / 2)
+      val area = (Math.pow(r2, 2) - Math.pow(r, 2)) * Math.PI
+      val numberOfPoints = (density * area).toInt
+
+      Seq.fill(numberOfPoints)(drawPoint(r, r2, velocityFn))
     }).flatten.toArray
 
     println(s"Generated space with ${generatedPoints.size} points")
