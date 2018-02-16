@@ -40,7 +40,11 @@ class Simulation(
       for (j <- (i + 1 until space.points.length).par) {
 
         val distanceVector = space.points(i).distanceVector(space.points(j))
-        val forceScalar = G * space.points(i).mass * space.points(j).mass / Math.pow(distanceVector.magnitude, 3.0)
+
+        // [F] = [pc/M_sun * (km/s)^2 * M_sun^2 * 1/pc^3 * pc] = [ M_sun * km/s^2 * (km/pc) ]
+        // in order to eliminate (km/pc) piece, we need to multiply by Constants.kmPcRatio
+        val forceScalar = (G * space.points(i).mass * space.points(j).mass / Math.pow(distanceVector.magnitude, 3.0)) * Constants.kmPcRatio
+
         val forceFactor = (
           distanceVector.x * forceScalar,
           distanceVector.y * forceScalar
@@ -56,8 +60,8 @@ class Simulation(
 
     new Space(space.points.view.zipWithIndex.map { case (point, pointIdx) =>
       val newPosition = point.position.copy(
-        x = point.position.x + stepTimespan * point.velocity.x,
-        y = point.position.y + stepTimespan * point.velocity.y
+        x = point.position.x + stepTimespan * Constants.kmToPc(point.velocity.x),
+        y = point.position.y + stepTimespan * Constants.kmToPc(point.velocity.y)
       )
 
       val newVelocity = point.velocity.copy(
@@ -77,7 +81,7 @@ object Simulation {
     val scaleLength = 0.5
     val rMax = 5
     val totalMass = 1000
-    
+
     val space = Space.generateSpaceFromDensityFn(
       densityFn = r => BulgeProfile.densityFn(r, totalMass, scaleLength),
       velocityFn = r => BulgeProfile.velocityFn(r, totalMass, scaleLength),
