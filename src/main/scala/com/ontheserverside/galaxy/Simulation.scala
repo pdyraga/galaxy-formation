@@ -19,7 +19,7 @@ object Simulation {
     space.draw(
       outputFile = new File(f"/tmp/simulation/space-$stepNumber%010d.png"),
       imageSize = 2000,
-      scale = 100
+      scale = 1000
     )
   }
 }
