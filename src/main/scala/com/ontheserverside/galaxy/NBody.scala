@@ -10,7 +10,6 @@ import scala.annotation.tailrec
 class NBody(
   val totalSteps: Int,
   val stepTimespan: Double,
-  val rMax: Double,
   val onStepCompleted: (Space, Int) => Unit
 ) {
   def execute(space: Space): Space = execute(space, 0)

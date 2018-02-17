@@ -14,7 +14,7 @@ object Simulation {
   }
 
   private[this] def execute(profile: Profile, totalSteps: Int, onStepCompleted: (Space, Int) => Unit): Unit = {
-    val nBody = new NBody(totalSteps, profile.stepDuration, profile.rMax, onStepCompleted)
+    val nBody = new NBody(totalSteps, profile.stepDuration, onStepCompleted)
     nBody.execute(profile.generateSpace)
   }
 
