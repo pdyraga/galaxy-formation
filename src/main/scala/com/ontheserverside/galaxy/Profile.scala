@@ -34,7 +34,7 @@ object BulgeProfile extends Profile {
 
   val stepDuration = yearsToSeconds(100)
 
-  val totalMass = 5000
+  val totalMass = 10e4
 
   override def generateSpace: Space = {
     Space.generateSpaceFromDensityFn(density, velocity, rMax)
