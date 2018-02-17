@@ -12,11 +12,11 @@ trait Profile {
 object RingProfile extends Profile {
   val rMax = 5
 
-  val stepDuration = yearsToSeconds(100)
+  val stepDuration = yearsToSeconds(1000)
 
   val pointsCount = 5000
 
-  val centralMass = 10E5
+  val centralMass = 10e4
 
   override def generateSpace: Space = {
     Space.generateHomogeneousSpace(pointsCount, velocity, rMax, Some(centralMass))
