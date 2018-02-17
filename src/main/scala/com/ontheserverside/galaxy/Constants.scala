@@ -17,4 +17,8 @@ object Constants {
     * 1 [km] = 3.24078e-14 [pc]
     */
   val kmPcRatio = 3.24078e-14
+
+  def yearsToSeconds(years: Double): Double = {
+    years * 3.154e+7
+  }
 }

@@ -1,6 +1,6 @@
 package com.ontheserverside.galaxy
 
-import com.ontheserverside.galaxy.Constants.G
+import com.ontheserverside.galaxy.Constants._
 
 trait Profile {
   def generateSpace: Space
@@ -12,7 +12,7 @@ trait Profile {
 object RingProfile extends Profile {
   val rMax = 5
 
-  val stepDuration = 100 * 3.154e+7 // 100 years
+  val stepDuration = yearsToSeconds(100)
 
   val pointsCount = 5000
 
@@ -32,7 +32,7 @@ object BulgeProfile extends Profile {
 
   val scaleLength = 0.5
 
-  val stepDuration = 100 * 3.154e+7 // 100 years
+  val stepDuration = yearsToSeconds(100)
 
   val totalMass = 5000
 

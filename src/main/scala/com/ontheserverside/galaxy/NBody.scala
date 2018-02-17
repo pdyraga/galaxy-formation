@@ -3,7 +3,7 @@ package com.ontheserverside.galaxy
 import java.time.LocalDateTime
 
 import com.google.common.util.concurrent.AtomicDoubleArray
-import com.ontheserverside.galaxy.Constants.G
+import com.ontheserverside.galaxy.Constants.{G, kmPcRatio}
 
 import scala.annotation.tailrec
 
@@ -38,7 +38,7 @@ class NBody(
 
         // [F] = [pc/M_sun * (km/s)^2 * M_sun^2 * 1/pc^3 * pc] = [ M_sun * km/s^2 * (km/pc) ]
         // in order to eliminate (km/pc) piece, we need to multiply by Constants.kmPcRatio
-        val forceScalar = (G * space.points(i).mass * space.points(j).mass / Math.pow(distanceVector.magnitude, 3.0)) * Constants.kmPcRatio
+        val forceScalar = (G * space.points(i).mass * space.points(j).mass / Math.pow(distanceVector.magnitude, 3.0)) * kmPcRatio
 
         val forceFactor = (
           distanceVector.x * forceScalar,
