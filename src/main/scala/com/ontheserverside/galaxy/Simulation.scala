@@ -10,7 +10,7 @@ import scala.annotation.tailrec
 import DrawableSpace._
 import Constants._
 
-class Simulation(
+class NBody(
   val totalSteps: Int,
   val stepTimespan: Double,
   val rMax: Double,
@@ -77,28 +77,20 @@ class Simulation(
 object Simulation {
   // ffmpeg -r 10 -f image2 -s 2000x2000 -i space-%05d.png -vcodec libx264 -crf 25  -pix_fmt yuv420p test.mp4
   def main(args: Array[String]): Unit = {
-
-    val scaleLength = 0.5
-    val rMax = 5
-    val totalMass = 1000
-
-    val space = Space.generateSpaceFromDensityFn(
-      densityFn = r => BulgeProfile.densityFn(r, totalMass, scaleLength),
-      velocityFn = r => BulgeProfile.velocityFn(r, totalMass, scaleLength),
-      rMax = rMax
-    )
-
-    draw(space, "space-initial", rMax)
-
-    val onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d", rMax)
-    new Simulation(1000, 1, rMax, onStepCompleted).execute(space)
+    val onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d")
+    Simulation.execute(RingProfile, 100, onStepCompleted)
   }
 
-  private[this] def draw(space: Space, fileName: String, rMax: Double) = {
+  private[this] def draw(space: Space, fileName: String) = {
     space.draw(
       outputFile = new File(s"/tmp/simulation/$fileName.png"),
       imageSize = 2000,
       scale = 100
     )
+  }
+
+  def execute(profile: Profile, totalSteps: Int, onStepCompleted: (Space, Int) => Unit): Unit = {
+    val nBody = new NBody(totalSteps, profile.stepDuration, profile.rMax, onStepCompleted)
+    nBody.execute(profile.generateSpace)
   }
 }

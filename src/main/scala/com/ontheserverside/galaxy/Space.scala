@@ -2,8 +2,6 @@ package com.ontheserverside.galaxy
 
 import java.util.concurrent.ThreadLocalRandom
 
-import Constants._
-
 case class Point(
   position: EuclideanVector,
   velocity: EuclideanVector,
@@ -20,11 +18,20 @@ case class Point(
 class Space(val points: Array[Point])
 
 object Space {
-  def generateHomogeneousSpace(pointsCount: Int, rMax: Double): Space = {
-    val centralMass = 10E10
-    val centralMassPoint = Point(EuclideanVector(0, 0), EuclideanVector(0,0), centralMass)
+  def generateHomogeneousSpace(
+    pointsCount: Int,
+    velocityFn: Double => Double,
+    rMax: Double,
+    centralMass: Option[Double] = None
+  ): Space = {
+    val centralMassPoint = centralMass.map(mass =>
+      Point(EuclideanVector(0, 0), EuclideanVector(0,0), mass)
+    )
 
-    new Space(centralMassPoint +: Array.fill(pointsCount)(drawPoint(0, rMax, r => Math.sqrt(G * centralMass / r))))
+    new Space(
+      centralMassPoint.toArray ++
+      Array.fill(pointsCount)(drawPoint(0, rMax, velocityFn))
+    )
   }
 
   def generateSpaceFromDensityFn(
@@ -43,7 +50,6 @@ object Space {
       Seq.fill(numberOfPoints)(drawPoint(r, r2, velocityFn))
     }).flatten.toArray
 
-    println(s"Generated space with ${generatedPoints.size} points")
     new Space(generatedPoints)
   }
   
