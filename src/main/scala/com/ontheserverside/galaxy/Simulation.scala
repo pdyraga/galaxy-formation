@@ -7,7 +7,7 @@ object Simulation {
   def main(args: Array[String]): Unit = {
     execute(
       profile = BulgeProfile,
-      totalSteps = 100,
+      totalSteps = args.headOption.map(_.toInt).getOrElse(Int.MaxValue),
       onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d")
     )
   }
