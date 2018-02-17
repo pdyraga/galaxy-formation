@@ -30,7 +30,7 @@ object Space {
 
     new Space(
       centralMassPoint.toArray ++
-      Array.fill(pointsCount)(drawPoint(0, rMax, velocityFn))
+      Array.fill(pointsCount)(createPoint(0, rMax, velocityFn))
     )
   }
 
@@ -47,13 +47,13 @@ object Space {
       val area = (Math.pow(r2, 2) - Math.pow(r, 2)) * Math.PI
       val numberOfPoints = (density * area).toInt
 
-      Seq.fill(numberOfPoints)(drawPoint(r, r2, velocityFn))
+      Seq.fill(numberOfPoints)(createPoint(r, r2, velocityFn))
     }).flatten.toArray
 
     new Space(generatedPoints)
   }
-  
-  def drawPoint(rMin: Double, rMax: Double, velocityFn: Double => Double): Point = {
+
+  def createPoint(rMin: Double, rMax: Double, velocityFn: Double => Double): Point = {
     val random = ThreadLocalRandom.current()
 
     val r = random.nextDouble(0, 1)
