@@ -5,21 +5,19 @@ import DrawableSpace._
 
 object Simulation {
   def main(args: Array[String]): Unit = {
-    execute(
-      profile = BulgeProfile,
-      totalSteps = args.headOption.map(_.toInt).getOrElse(Int.MaxValue),
-      onStepCompleted = (s: Space, stepNumber: Int) => draw(s, f"space-$stepNumber%05d")
-    )
+    val totalNumberOfSteps = args.headOption.map(_.toInt).getOrElse(Int.MaxValue)
+    execute(BulgeProfile, totalNumberOfSteps)
   }
 
-  private[this] def execute(profile: Profile, totalSteps: Int, onStepCompleted: (Space, Int) => Unit): Unit = {
-    val nBody = new NBody(totalSteps, profile.stepDuration, onStepCompleted)
-    nBody.execute(profile.generateSpace)
+  private[this] def execute(profile: Profile, totalSteps: Int): Unit = {
+    val space = profile.generateSpace
+    draw(space, 0)
+    new NBody(totalSteps, profile.stepDuration, draw).execute(space)
   }
 
-  private[this] def draw(space: Space, fileName: String) = {
+  private[this] def draw(space: Space, stepNumber: Int): Unit = {
     space.draw(
-      outputFile = new File(s"/tmp/simulation/$fileName.png"),
+      outputFile = new File(f"/tmp/simulation/space-$stepNumber%010d.png"),
       imageSize = 2000,
       scale = 100
     )

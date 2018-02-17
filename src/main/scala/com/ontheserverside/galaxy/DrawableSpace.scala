@@ -14,7 +14,7 @@ object DrawableSpace {
 /**
   Lets to draw Space instance to PNG file. You can later create animation with:
 
-  ffmpeg -r 10 -f image2 -s 2000x2000 -i space-%05d.png -vcodec libx264 -crf 25 -pix_fmt yuv420p test.mp4
+  ffmpeg -r 10 -f image2 -s 2000x2000 -i space-%010d.png -vcodec libx264 -crf 25 -pix_fmt yuv420p test.mp4
  */
 class DrawableSpace(space: Space) {
   type Points = Iterable[(Double, Double)]

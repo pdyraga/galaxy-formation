@@ -12,17 +12,18 @@ class NBody(
   val stepTimespan: Double,
   val onStepCompleted: (Space, Int) => Unit
 ) {
-  def execute(space: Space): Space = execute(space, 0)
+  def execute(space: Space): Space = execute(space, 1)
 
   @tailrec
   private[this] def execute(space: Space, stepsSoFar: Int): Space = {
     println(s"[${LocalDateTime.now}] Executing step $stepsSoFar out of $totalSteps")
 
+    val transformed = executeStep(space)
+    onStepCompleted(transformed, stepsSoFar)
+
     if (stepsSoFar == totalSteps) {
-      space
+      transformed
     } else {
-      val transformed = executeStep(space)
-      onStepCompleted(transformed, stepsSoFar)
       execute(transformed, stepsSoFar + 1)
     }
   }
