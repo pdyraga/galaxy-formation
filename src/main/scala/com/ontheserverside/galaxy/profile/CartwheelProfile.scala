@@ -9,6 +9,8 @@ object CartwheelProfile extends Profile {
 
   val stepDuration = yearsToSeconds(100)
 
+  val softeningLength = 0.5e-5
+
   override def generateSpace: Space = {
     val pointsCount = 5000
     val ε = 1.0

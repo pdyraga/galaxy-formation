@@ -7,6 +7,8 @@ object BlackHoleProfile extends Profile with UniformPointDistributionSupport {
 
   val stepDuration = yearsToSeconds(1000)
 
+  val softeningLength = 0.5e-5
+
   private[this] val pointsCount = 4000
 
   private[this] val centralMass = 10e4

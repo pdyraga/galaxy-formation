@@ -7,5 +7,5 @@ trait Profile {
 
   def stepDuration: Double
 
-  //TODO: move here softening factor
+  def softeningLength: Double
 }

@@ -14,8 +14,7 @@ object Simulation {
   private[this] def execute(profile: Profile, totalSteps: Int): Unit = {
     val space = profile.generateSpace
     draw(space, 0)
-    val softeningLength = 0.5e-5
-    new NBody(totalSteps, profile.stepDuration, draw, softeningLength).execute(space)
+    new NBody(totalSteps, profile.stepDuration, draw, profile.softeningLength).execute(space)
   }
 
   private[this] def draw(space: Space, stepNumber: Int): Unit = {

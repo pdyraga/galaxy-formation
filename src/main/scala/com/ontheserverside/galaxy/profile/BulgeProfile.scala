@@ -7,6 +7,8 @@ object BulgeProfile extends Profile with DensityFunctionGenSupport {
 
   val stepDuration = yearsToSeconds(100)
 
+  val softeningLength = 0.5e-5
+
   private[this] val rMax = 5
 
   private[this] val scaleLength = 0.5
