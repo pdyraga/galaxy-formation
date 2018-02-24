@@ -8,9 +8,10 @@ import com.ontheserverside.galaxy.Constants.{G, kmPcRatio}
 import scala.annotation.tailrec
 
 class NBody(
-  val totalSteps: Int,
-  val stepTimespan: Double,
-  val onStepCompleted: (Space, Int) => Unit
+  totalSteps: Int,
+  stepTimespan: Double,
+  onStepCompleted: (Space, Int) => Unit,
+  softeningLength: Double
 ) {
   def execute(space: Space): Space = execute(space, 1)
 
@@ -36,10 +37,11 @@ class NBody(
       for (j <- (i + 1 until space.points.length).par) {
 
         val distanceVector = space.points(i).distanceVector(space.points(j))
+        val softenedDistance = Math.pow((Math.pow(distanceVector.magnitude, 2) + Math.pow(softeningLength, 2)), 3/2)
 
         // [F] = [pc/M_sun * (km/s)^2 * M_sun^2 * 1/pc^3 * pc] = [ M_sun * km/s^2 * (km/pc) ]
         // in order to eliminate (km/pc) piece, we need to multiply by Constants.kmPcRatio
-        val forceScalar = (G * space.points(i).mass * space.points(j).mass / Math.pow(distanceVector.magnitude, 3.0)) * kmPcRatio
+        val forceScalar = (G * space.points(i).mass * space.points(j).mass / softenedDistance) * kmPcRatio
 
         val forceFactor = (
           distanceVector.x * forceScalar,
