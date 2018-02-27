@@ -3,12 +3,12 @@ package com.ontheserverside.galaxy
 import java.io.File
 
 import DrawableSpace._
-import com.ontheserverside.galaxy.profile.{CartwheelProfile, Profile}
+import com.ontheserverside.galaxy.profile._
 
 object Simulation {
   def main(args: Array[String]): Unit = {
     val totalNumberOfSteps = args.headOption.map(_.toInt).getOrElse(Int.MaxValue)
-    execute(CartwheelProfile, totalNumberOfSteps)
+    execute(SpiralProfile, totalNumberOfSteps)
   }
 
   private[this] def execute(profile: Profile, totalSteps: Int): Unit = {
@@ -21,7 +21,7 @@ object Simulation {
     space.draw(
       outputFile = new File(f"/tmp/simulation/space-$stepNumber%010d.png"),
       imageSize = 2000,
-      scale = 500
+      scale = 2000
     )
   }
 }
