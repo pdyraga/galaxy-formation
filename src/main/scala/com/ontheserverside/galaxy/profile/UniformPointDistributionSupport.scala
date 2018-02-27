@@ -21,6 +21,6 @@ trait UniformPointDistributionSupport {
 
     val R = Math.sqrt((Math.pow(rMax, 2) - Math.pow(rMin, 2)) * ρ + Math.pow(rMin, 2))
 
-    Point.fromPolarCoordinates(ρ, φ, R, velocityFn)
+    Point.fromPolarCoordinates(R, φ, rMax, velocityFn)
   }
 }
