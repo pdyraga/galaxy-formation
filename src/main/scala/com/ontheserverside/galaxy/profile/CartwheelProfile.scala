@@ -12,16 +12,15 @@ object CartwheelProfile extends Profile {
   val softeningLength = 0.5e-5
 
   override def generateSpace: Space = {
-    val pointsCount = 5000
-    val ε = 1.0
+    val pointsCount = 10000
 
     new Space(Array.fill(pointsCount) {
       val random = ThreadLocalRandom.current()
 
-      val ρ = random.nextDouble(0, 1)
+      val ρ = random.nextDouble(0, 0.25)
       val φ = random.nextDouble(0, Math.PI * 2)
 
-      Point.fromPolarCoordinates(ρ, φ, 50 * ρ)
+      Point.fromPolarCoordinates(ρ, φ, 5 * ρ)
     })
   }
 }
