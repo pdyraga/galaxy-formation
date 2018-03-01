@@ -9,11 +9,11 @@ object BulgeProfile extends Profile with DensityFunctionGenSupport {
 
   val softeningLength = 0.5e-5
 
-  private[this] val rMax = 5
+  private[this] val rMax = 60
 
   private[this] val scaleLength = 0.5
 
-  private[this] val totalMass = 10e4
+  private[this] val totalMass = 10e6
 
   override def generateSpace: Space = {
     generateSpaceFromDensityFn(density, velocity, rMax)
